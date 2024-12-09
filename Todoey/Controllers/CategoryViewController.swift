@@ -21,6 +21,8 @@ class CategoryViewController: UITableViewController {
         super.viewDidLoad()
 
         loadCategories()
+        
+        tableView.rowHeight = 80.0
     }
     //MARK: -Table View Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -95,6 +97,33 @@ class CategoryViewController: UITableViewController {
             print("Error fetching categories: \(error)")
         }
         self.tableView.reloadData()
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, completionHandler in
+                    // Silinecek kategoriyi al
+                    let categoryToDelete = self.categoryArray[indexPath.row]
+                    
+                    // Core Data'dan sil
+                    self.context.delete(categoryToDelete)
+                    self.categoryArray.remove(at: indexPath.row)
+                    
+                    do {
+                       try self.context.save()
+                   } catch {
+                       print("Error deleting category: \(error)")
+                   }
+                   
+                   // TableView'i güncelle
+                   tableView.deleteRows(at: [indexPath], with: .automatic)
+                   completionHandler(true)
+                }
+                deleteAction.image = UIImage(systemName: "trash")
+                deleteAction.backgroundColor = .red
+        
+                let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+                return configuration
     }
     
 }

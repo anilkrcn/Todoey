@@ -17,6 +17,7 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print(dataFilePath)
+        tableView.rowHeight = 80.0
         
     }
     
